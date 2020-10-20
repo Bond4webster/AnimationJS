@@ -1,0 +1,106 @@
+<!doctype html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8" />
+            <title>Phaser - Making your first game, part 8</title>
+            <script src="//cdn.jsdelivr.net/phaser/2.5.0/phaser.min.js"></script>
+<style type="text/css">
+    body {
+        margin: 0;
+    }
+</style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+    const game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+    let sprite1;
+    let sprite2;
+    let sprite3;
+    let sprite4;
+
+    let timer = 0;
+    let tween
+    let tweenScale
+
+    function preload() {
+        game.load.spritesheet('start', 'img/bri_big_anim_start.png', 392, 372, 4);
+        game.load.spritesheet('middle', 'img/bri_big_anim_middle.png', 449, 432, 4);
+        game.load.spritesheet('finish', 'img/bri_big_anim_finish.png', 326, 337, 4);
+        game.load.spritesheet('middle', 'img/bri_big_anim_middle.png', 449, 432, 1);
+    }
+
+    function create() {
+
+        sprite1 = game.add.sprite(350, 300, 'start');
+        sprite1.animations.add('rotation');
+        sprite1.animations.play('rotation', 5, true);
+        sprite1.scale.set(0.25,0.25)
+
+        timer=game.time.now + 2000
+
+        sprite2 = game.add.sprite(1000, 1000, 'middle');
+        sprite2.animations.add('rotation');
+        sprite2.animations.play('rotation', 5, true);
+        sprite2.scale.set(0.7,0.7)
+
+        sprite3 = game.add.sprite(2000, 2000, 'finish');
+        sprite3.animations.add('rotation');
+        sprite3.animations.play('rotation', 5, true);
+        sprite3.scale.set(0.9,0.9)
+
+        tweenScale = game.add.tween(sprite3.scale).to({x:0.1,y:0.1}, 500, Phaser.Easing.Linear.None, false)
+        tween = game.add.tween(sprite3).to({ centerX: 330,centerY:100}, 500, Phaser.Easing.Linear.None, false)
+
+        sprite4 = game.add.sprite(1000, 1000, 'middle');
+        sprite4.scale.set(0.08,0.08)
+
+
+    }
+
+
+    function update() {
+
+        if (sprite1.scale.x <0.85)
+        {
+            sprite1.scale.x += 0.02;
+            sprite1.scale.y += 0.02;
+            sprite1.x = game.width/2-sprite1.width/2
+            sprite1.y = game.height/2-sprite1.height/2
+        }
+
+        if(sprite1.scale.x >=0.85 && timer>game.time.now)
+        {
+            sprite1.kill()
+            sprite2.x = game.width/2-sprite2.width/2
+            sprite2.y = game.height/2-sprite2.height/2
+        }
+
+        if (timer<game.time.now && sprite3.x ==2000)
+        {
+            sprite2.kill()
+            move()
+        }
+
+        if (sprite3.centerX <330)
+        {
+            sprite4.centerX = sprite3.centerX
+            sprite4.centerY = sprite3.centerY
+            sprite3.kill()
+        }
+
+    }
+
+    function move(){
+        sprite3.x = game.width/2-sprite3.width/2
+        sprite3.y = game.height/2-sprite3.height/2
+        tween.start()
+        tweenScale.start()
+    }
+
+</script>
+
+</body>
+</html>
